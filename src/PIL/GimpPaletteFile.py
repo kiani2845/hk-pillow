@@ -15,8 +15,7 @@
 #
 
 import re
-
-from ._binary import o8
+import warnings
 
 
 class GimpPaletteFile:
@@ -24,35 +23,49 @@ class GimpPaletteFile:
 
     rawmode = "RGB"
 
-    def __init__(self, fp):
+    #: override if reading larger palettes is needed
+    max_colors = 256
+    _max_line_size = 100
+    _max_file_size = 2**20  # 1MB
 
-        self.palette = [o8(i) * 3 for i in range(256)]
+    def __init__(self, fp):
 
         if fp.readline()[:12] != b"GIMP Palette":
             msg = "not a GIMP palette file"
             raise SyntaxError(msg)
 
-        for i in range(256):
+        read = 0
 
-            s = fp.readline()
+        self.palette = []
+        while len(self.palette) < 3 * self.max_colors:
+
+            s = fp.readline(self._max_file_size)
             if not s:
+                break
+
+            read += len(s)
+            if read >= self._max_file_size:
+                warnings.warn(
+                    f"Palette file truncated at {self._max_file_size - len(s)} bytes"
+                )
                 break
 
             # skip fields and comment lines
             if re.match(rb"\w+:|#", s):
                 continue
-            if len(s) > 100:
+            if len(s) > self._max_line_size:
                 msg = "bad palette file"
                 raise SyntaxError(msg)
 
-            v = tuple(map(int, s.split()[:3]))
-            if len(v) != 3:
+            # 4th column is color name and may contain spaces.
+            v = s.split(maxsplit=3)
+            if len(v) < 3:
                 msg = "bad palette entry"
                 raise ValueError(msg)
 
-            self.palette[i] = o8(v[0]) + o8(v[1]) + o8(v[2])
+            self.palette += (int(v[0]), int(v[1]), int(v[2]))
 
-        self.palette = b"".join(self.palette)
+        self.palette = bytes(self.palette)
 
     def getpalette(self):
 
