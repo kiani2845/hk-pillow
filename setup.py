@@ -62,6 +62,7 @@ _IMAGING = ("decode", "encode", "map", "display", "outline", "path")
 _LIB_IMAGING = (
     "Access",
     "AlphaComposite",
+    "Arrow",
     "Resample",
     "Reduce",
     "Bands",
