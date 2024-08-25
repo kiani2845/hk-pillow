@@ -61,11 +61,11 @@ optional-dependencies.tests = [
   "markdown2",
   "olefile",
   "packaging",
+  "pyarrow",
   "pyroma",
   "pytest",
   "pytest-cov",
   "pytest-timeout",
-  "pyarrow",
 ]
 optional-dependencies.typing = [
   "typing-extensions; python_version<'3.10'",

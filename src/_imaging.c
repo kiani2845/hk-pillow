@@ -228,38 +228,41 @@ PyImaging_GetBuffer(PyObject *buffer, Py_buffer *view) {
 /* Arrow HANDLING                                                       */
 /* -------------------------------------------------------------------- */
 
-void ReleaseArrowSchemaPyCapsule(PyObject* capsule) {
-    struct ArrowSchema* schema =
-        (struct ArrowSchema*)PyCapsule_GetPointer(capsule, "arrow_schema");
+void
+ReleaseArrowSchemaPyCapsule(PyObject *capsule) {
+    struct ArrowSchema *schema =
+        (struct ArrowSchema *)PyCapsule_GetPointer(capsule, "arrow_schema");
     if (schema->release != NULL) {
         schema->release(schema);
     }
     free(schema);
 }
 
-PyObject* ExportArrowSchemaPyCapsule(ImagingObject *self) {
-    struct ArrowSchema* schema =
-      (struct ArrowSchema*)calloc(1, sizeof(struct ArrowSchema));
+PyObject *
+ExportArrowSchemaPyCapsule(ImagingObject *self) {
+    struct ArrowSchema *schema =
+        (struct ArrowSchema *)calloc(1, sizeof(struct ArrowSchema));
     export_imaging_schema(self->image, schema);
     return PyCapsule_New(schema, "arrow_schema", ReleaseArrowSchemaPyCapsule);
 }
 
-void ReleaseArrowArrayPyCapsule(PyObject* capsule) {
-    struct ArrowArray* array =
-        (struct ArrowArray*)PyCapsule_GetPointer(capsule, "arrow_array");
+void
+ReleaseArrowArrayPyCapsule(PyObject *capsule) {
+    struct ArrowArray *array =
+        (struct ArrowArray *)PyCapsule_GetPointer(capsule, "arrow_array");
     if (array->release != NULL) {
         array->release(array);
     }
     free(array);
 }
 
-PyObject* ExportArrowArrayPyCapsule(ImagingObject *self) {
-    struct ArrowArray* array =
-      (struct ArrowArray*)calloc(1, sizeof(struct ArrowArray));
+PyObject *
+ExportArrowArrayPyCapsule(ImagingObject *self) {
+    struct ArrowArray *array =
+        (struct ArrowArray *)calloc(1, sizeof(struct ArrowArray));
     export_imaging_array(self->image, array);
     return PyCapsule_New(array, "arrow_array", ReleaseArrowArrayPyCapsule);
 }
-
 
 /* -------------------------------------------------------------------- */
 /* EXCEPTION REROUTING                                                  */
