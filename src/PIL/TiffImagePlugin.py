@@ -1191,11 +1191,7 @@ class TiffImageFile(ImageFile.ImageFile):
         if not self._seek_check(frame):
             return
         self._seek(frame)
-        # Create a new core image object on second and
-        # subsequent frames in the image. Image may be
-        # different size/mode.
-        Image._decompression_bomb_check(self._tile_size)
-        self.im = Image.core.new(self.mode, self._tile_size)
+        self._im = None
 
     def _seek(self, frame: int) -> None:
         self.fp = self._fp
@@ -1277,6 +1273,7 @@ class TiffImageFile(ImageFile.ImageFile):
 
     def load_prepare(self) -> None:
         if self._im is None:
+            Image._decompression_bomb_check(self._tile_size)
             self.im = Image.core.new(self.mode, self._tile_size)
         ImageFile.ImageFile.load_prepare(self)
 
