@@ -111,15 +111,15 @@ ARCHITECTURES = {
 V = {
     "BROTLI": "1.1.0",
     "FREETYPE": "2.13.3",
-    "FRIBIDI": "1.0.15",
-    "HARFBUZZ": "9.0.0",
+    "FRIBIDI": "1.0.16",
+    "HARFBUZZ": "10.0.1",
     "JPEGTURBO": "3.0.4",
     "LCMS2": "2.16",
     "LIBPNG": "1.6.44",
     "LIBWEBP": "1.4.0",
     "OPENJPEG": "2.5.2",
     "TIFF": "4.6.0",
-    "XZ": "5.6.2",
+    "XZ": "5.6.3",
     "ZLIB": "1.3.1",
     "MESON": "1.5.1",
     "LIBAVIF": "1.1.1",
@@ -188,7 +188,7 @@ DEPS: dict[str, dict[str, Any]] = {
             cmd_copy(r"src\liblzma\api\lzma\*.h", r"{inc_dir}\lzma"),
         ],
         "headers": [r"src\liblzma\api\lzma.h"],
-        "libs": [r"liblzma.lib"],
+        "libs": [r"lzma.lib"],
     },
     "libwebp": {
         "url": f"http://downloads.webmproject.org/releases/webp/libwebp-{V['LIBWEBP']}.tar.gz",
@@ -219,8 +219,8 @@ DEPS: dict[str, dict[str, Any]] = {
         "license": "LICENSE.md",
         "patch": {
             r"libtiff\tif_lzma.c": {
-                # link against liblzma.lib
-                "#ifdef LZMA_SUPPORT": '#ifdef LZMA_SUPPORT\n#pragma comment(lib, "liblzma.lib")',  # noqa: E501
+                # link against lzma.lib
+                "#ifdef LZMA_SUPPORT": '#ifdef LZMA_SUPPORT\n#pragma comment(lib, "lzma.lib")',  # noqa: E501
             },
             r"libtiff\tif_webp.c": {
                 # link against libwebp.lib
@@ -295,8 +295,12 @@ DEPS: dict[str, dict[str, Any]] = {
         },
         "build": [
             cmd_rmdir("objs"),
-            cmd_msbuild("MSBuild.sln", "Release Static", "Clean"),
-            cmd_msbuild("MSBuild.sln", "Release Static", "Build"),
+            cmd_msbuild(
+                r"builds\windows\vc2010\freetype.vcxproj", "Release Static", "Clean"
+            ),
+            cmd_msbuild(
+                r"builds\windows\vc2010\freetype.vcxproj", "Release Static", "Build"
+            ),
             cmd_xcopy("include", "{inc_dir}"),
         ],
         "libs": [r"objs\{msbuild_arch}\Release Static\freetype.lib"],

@@ -5,6 +5,30 @@ Changelog (Pillow)
 11.0.0 (unreleased)
 -------------------
 
+- Support all resampling filters when resizing I;16* images #8422
+  [radarhere]
+
+- Free memory on early return #8413
+  [radarhere]
+
+- Cast int before potentially exceeding INT_MAX #8402
+  [radarhere]
+
+- Check image value before use #8400
+  [radarhere]
+
+- Improved copying imagequant libraries #8420
+  [radarhere]
+
+- Use Capsule for WebP saving #8386
+  [homm, radarhere]
+
+- Fixed writing multiple StripOffsets to TIFF #8317
+  [Yay295, radarhere]
+
+- Fix dereference before checking for NULL in ImagingTransformAffine #8398
+  [PavlNekrasov]
+
 - Use transposed size after opening for TIFF images #8390
   [radarhere, homm]
 
